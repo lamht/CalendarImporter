@@ -97,3 +97,14 @@ jobs:
           git add *.xcodeproj
           git commit -m "Generate iOS project files"
           git push
+
+      - name: Push changes
+        run: |
+          git config --global user.email "gitactionbot@thanhlam.com"
+          git config --global user.name "GetHub Action Bot"
+          git remote set-url origin https://x-access-token:${{ secrets.GH_TOKEN }}@github.com/lamht/CalendarImporter.git
+          git add project.yml
+          git add CalendarImporter/Info.plist
+          git add *.xcodeproj
+          git commit -m "Generate iOS project files"
+          git push
