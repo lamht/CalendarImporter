@@ -1,8 +1,8 @@
 name: iOS Build
 
 on:
-  push:
-    branches: [ main ]
+  # push:
+  #   branches: [ main ]
   pull_request:
     branches: [ main ]
   workflow_dispatch:
@@ -40,7 +40,7 @@ jobs:
           zip -r CalendarImporter-unsigned.ipa Payload
 
       - name: Upload IPA
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: CalendarImporter-Unsigned-IPA
           path: build/CalendarImporter.xcarchive/Products/Applications/CalendarImporter-unsigned.ipa
