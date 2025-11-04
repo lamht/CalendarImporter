@@ -1,0 +1,102 @@
+name: Setup iOS Project5
+
+jobs:
+  setup:
+    name: Generate Project Files
+    runs-on: macos-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          # Use GITHUB_TOKEN instead if you only need repo access
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Install XcodeGen
+        run: |
+          brew install xcodegen
+
+      - name: Create project.yml
+        run: |
+          cat > project.yml << EOL
+          name: CalendarImporter
+          options:
+            bundleIdPrefix: com.yourcompany
+            deploymentTarget: "15.0"
+          targets:
+            CalendarImporter:
+              type: application
+              platform: iOS
+              sources:
+                - CalendarImporter
+              settings:
+                base:
+                  INFOPLIST_FILE: CalendarImporter/Info.plist
+                  PRODUCT_BUNDLE_IDENTIFIER: com.yourcompany.calendarimporter
+                  DEVELOPMENT_TEAM: ""
+                  CODE_SIGN_STYLE: Manual
+              info:
+                path: CalendarImporter/Info.plist
+                properties:
+                  UILaunchStoryboardName: LaunchScreen
+                  UISupportedInterfaceOrientations: [UIInterfaceOrientationPortrait]
+                  UIApplicationSceneManifest:
+                    UIApplicationSupportsMultipleScenes: true
+          EOL
+
+      - name: Create Info.plist
+        run: |
+          cat > CalendarImporter/Info.plist << EOL
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0">
+          <dict>
+              <key>CFBundleDevelopmentRegion</key>
+              <string>en</string>
+              <key>CFBundleExecutable</key>
+              <string>$(EXECUTABLE_NAME)</string>
+              <key>CFBundleIdentifier</key>
+              <string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+              <key>CFBundleInfoDictionaryVersion</key>
+              <string>6.0</string>
+              <key>CFBundleName</key>
+              <string>$(PRODUCT_NAME)</string>
+              <key>CFBundlePackageType</key>
+              <string>APPL</string>
+              <key>CFBundleShortVersionString</key>
+              <string>1.0</string>
+              <key>CFBundleVersion</key>
+              <string>1</string>
+              <key>LSRequiresIPhoneOS</key>
+              <true/>
+              <key>NSCalendarsUsageDescription</key>
+              <string>This app needs access to calendars to import events.</string>
+              <key>UILaunchStoryboardName</key>
+              <string>LaunchScreen</string>
+              <key>UIRequiredDeviceCapabilities</key>
+              <array>
+                  <string>armv7</string>
+              </array>
+              <key>UISupportedInterfaceOrientations</key>
+              <array>
+                  <string>UIInterfaceOrientationPortrait</string>
+              </array>
+          </dict>
+          </plist>
+          EOL
+
+      - name: Generate Xcode project
+        run: xcodegen generate
+
+      - name: Commit and Push Changes
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "Generate iOS project files"
+          file_pattern: 'project.yml CalendarImporter/Info.plist *.xcodeproj'
+          commit_user_name: GitHub Actions
+          commit_user_email: thanhlam0290@gmail.com
+          token: ${{ secrets.GITHUB_TOKEN }}
