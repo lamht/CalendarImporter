@@ -1,4 +1,4 @@
-name: Setup iOS Project
+name: Setup iOS Project5
 
 on:
   workflow_dispatch:
@@ -7,10 +7,15 @@ jobs:
   setup:
     name: Generate Project Files
     runs-on: macos-latest
+    permissions:
+      contents: write
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
+        with:
+          # Use GITHUB_TOKEN instead if you only need repo access
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Install XcodeGen
         run: |
@@ -87,14 +92,20 @@ jobs:
 
       - name: Generate Xcode project
         run: xcodegen generate
-        
-      - name: Push changes
+
+      - name: Add files to git
         run: |
-          git config --global user.email "thanhlam0290@gmail.com"
-          git config --global user.name "GitHub Actions"
-          git remote set-url origin https://x-access-token:${{ secrets.GH_TOKEN }}@github.com/lamht/CalendarImporter.git
           git add project.yml
           git add CalendarImporter/Info.plist
           git add *.xcodeproj
-          git commit -m "Generate iOS project files" || echo "No changes to commit"
-          git push
+          
+      - name: Commit and Push Changes
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "Generate iOS project files"
+          file_pattern: 'project.yml CalendarImporter/Info.plist *.xcodeproj'
+          commit_user_name: GitHub Actions
+          commit_user_email: thanhlam0290@gmail.com
+          token: ${{ secrets.GITHUB_TOKEN }}
