@@ -100,11 +100,11 @@ jobs:
 
       - name: Push changes
         run: |
-          git config --global user.email "gitactionbot@thanhlam.com"
-          git config --global user.name "GetHub Action Bot"
+          git config --global user.email "github-actions@thanhlam.com"
+          git config --global user.name "GitHub Actions"
           git remote set-url origin https://x-access-token:${{ secrets.GH_TOKEN }}@github.com/lamht/CalendarImporter.git
           git add project.yml
           git add CalendarImporter/Info.plist
           git add *.xcodeproj
-          git commit -m "Generate iOS project files"
+          git commit -m "Generate iOS project files" || echo "No changes to commit"
           git push
