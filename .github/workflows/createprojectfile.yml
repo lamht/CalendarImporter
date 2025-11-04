@@ -86,7 +86,7 @@ jobs:
           EOL
 
       - name: Generate Xcode project
-        run: xcodebuild generate
+        run: xcodegen generate
 
       - name: Add files to git
         run: |
