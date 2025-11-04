@@ -1,5 +1,8 @@
 name: Setup iOS Project5
 
+on:
+  workflow_dispatch:
+
 jobs:
   setup:
     name: Generate Project Files
