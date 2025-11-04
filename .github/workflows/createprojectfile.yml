@@ -87,22 +87,11 @@ jobs:
 
       - name: Generate Xcode project
         run: xcodegen generate
-
-      - name: GitInfo
+        
+      - name: Push changes
         run: |
           git config --global user.email "thanhlam0290@gmail.com"
           git config --global user.name "GitHub Actions"
-
-      - name: Add files to git
-        run: |
-          git add project.yml
-          git add CalendarImporter/Info.plist
-          git add *.xcodeproj
-          git commit -m "Generate iOS project files"
-          git push
-
-      - name: Push changes
-        run: |
           git remote set-url origin https://x-access-token:${{ secrets.GH_TOKEN }}@github.com/lamht/CalendarImporter.git
           git add project.yml
           git add CalendarImporter/Info.plist
